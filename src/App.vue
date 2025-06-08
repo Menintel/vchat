@@ -5,10 +5,11 @@ import NavigationBar from './components/NavigationBar.vue'
 import { ref, onMounted } from 'vue'
 import db from './db'
 import { getAuth, signOut } from 'firebase/auth'
-import { addDoc, serverTimestamp, collection } from 'firebase/firestore'
+import { addDoc, serverTimestamp, collection, onSnapshot } from 'firebase/firestore'
 
 const user = ref('')
 const message = ref('')
+const rooms = ref([])
 
 const logout = async () => {
   try {
@@ -24,6 +25,14 @@ onMounted(() => {
   getAuth().onAuthStateChanged((firebaseUser) => {
     if (firebaseUser) {
       user.value = firebaseUser.displayName || 'Anonymous'
+      const userRoomsRef = collection(db, 'users', firebaseUser.uid, 'rooms')
+      onSnapshot(userRoomsRef, (querySnapshot) => {
+        rooms.value = querySnapshot.docs.map((doc) => ({
+          id: doc.id,
+          ...doc.data(),
+        }))
+        rooms.value.sort((a, b) => a.name.toLowerCase().localeCompare(b.name.toLowerCase()))
+      })
     } else {
       user.value = ''
     }
@@ -39,14 +48,13 @@ const addRoom = async (roomName) => {
   }
 
   try {
-    const roomRef = collection(db, 'rooms')
+    const roomRef = collection(db, 'users', currentUser.uid, 'rooms')
     await addDoc(roomRef, {
       name: roomName,
       createdAt: serverTimestamp(),
       createdBy: currentUser.displayName,
     })
-    message.value = 'Room "' + roomName + '" added successfully'
-    roomName = ''
+    message.value = `Room "${roomName}" added successfully`
   } catch (error) {
     console.error('Error adding room:', error)
     message.value = 'Failed to add room: ' + error.message
@@ -57,7 +65,9 @@ const addRoom = async (roomName) => {
 <template>
   <header class="container-fluid">
     <NavigationBar :user="user" :logout="logout" />
-    <RouterView :user="user" @addRoom="addRoom" />
+    <RouterView :user="user" @addRoom="addRoom" :rooms="rooms" v-slot="{ Component, route }">
+      <component :is="Component" :key="route.path" :rooms="rooms" />
+    </RouterView>
   </header>
 </template>
 
