@@ -2,23 +2,50 @@
 import { RouterView } from 'vue-router'
 import HelloWorld from './components/HelloWorld.vue'
 import NavigationBar from './components/NavigationBar.vue'
+
+import { ref, onMounted } from 'vue'
+import { getAuth, signOut } from 'firebase/auth'
+
+const user = ref('')
+
+const logout = async () => {
+  try {
+    await signOut(getAuth())
+    // Redirect to login page after logout
+    window.location.href = '/'
+  } catch (error) {
+    console.error('Error logging out:', error)
+  }
+}
+onMounted(() => {
+  // use the newer methode to intead of the old db.collection
+  getAuth().onAuthStateChanged((firebaseUser) => {
+    if (firebaseUser) {
+      user.value = firebaseUser.displayName || 'Anonymous'
+    } else {
+      user.value = ''
+    }
+  })
+})
 </script>
 
 <template>
-  <header>
-    <div class="wrapper">
+  <header class="m-1">
+    <div class="wrapper pt-5">
+      <NavigationBar :user="user" :logout="logout" />
       <HelloWorld msg="You did it!" />
-      <NavigationBar />
     </div>
   </header>
 
-  <RouterView />
+  <RouterView :user="user" />
 </template>
 
 <style scoped>
 header {
   line-height: 1.5;
   max-height: 100vh;
+  margin: 1rem !important;
+  padding: 1rem !important;
 }
 
 .logo {
@@ -30,7 +57,8 @@ nav {
   width: 100%;
   font-size: 12px;
   text-align: center;
-  margin-top: 2rem;
+  margin: 0 !important;
+  padding: 0 !important;
 }
 
 nav a.router-link-exact-active {
