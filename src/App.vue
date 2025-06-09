@@ -1,11 +1,19 @@
+<template>
+  <header class="container-fluid">
+    <NavigationBar :user="user" :logout="logout" />
+    <RouterView :user="user" @addRoom="addRoom" :rooms="rooms" v-slot="{ Component, route }">
+      <component :is="Component" :key="route.path" :rooms="rooms" @deleteRoom="deleteRoom" />
+    </RouterView>
+  </header>
+</template>
+
 <script setup>
-import { RouterView } from 'vue-router'
 import NavigationBar from './components/NavigationBar.vue'
 
 import { ref, onMounted } from 'vue'
 import db from './db'
 import { getAuth, signOut } from 'firebase/auth'
-import { addDoc, serverTimestamp, collection, onSnapshot } from 'firebase/firestore'
+import { addDoc, serverTimestamp, collection, onSnapshot, doc, deleteDoc } from 'firebase/firestore'
 
 const user = ref('')
 const message = ref('')
@@ -60,16 +68,25 @@ const addRoom = async (roomName) => {
     message.value = 'Failed to add room: ' + error.message
   }
 }
-</script>
 
-<template>
-  <header class="container-fluid">
-    <NavigationBar :user="user" :logout="logout" />
-    <RouterView :user="user" @addRoom="addRoom" :rooms="rooms" v-slot="{ Component, route }">
-      <component :is="Component" :key="route.path" :rooms="rooms" />
-    </RouterView>
-  </header>
-</template>
+const deleteRoom = async (roomId) => {
+  const currentUser = getAuth().currentUser
+
+  if (!currentUser) {
+    message.value = 'Please login to delete a room'
+    return
+  }
+
+  try {
+    const roomRef = doc(db, 'users', currentUser.uid, 'rooms', roomId)
+    await deleteDoc(roomRef)
+    message.value = `Room "${roomId}" deleted successfully`
+  } catch (error) {
+    console.error('Error deleting room:', error)
+    message.value = 'Failed to delete room: ' + error.message
+  }
+}
+</script>
 
 <style scoped>
 header {

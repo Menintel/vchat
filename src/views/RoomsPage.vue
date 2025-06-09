@@ -32,8 +32,8 @@
         </div>
       </div>
     </div>
-    <div class="row justify-content-center">
-      <div class="col-11 col-md-8 col-lg-6">
+    <div class="mt-5">
+      <div class="col-12">
         <div class="card border-top-0 rounded-0">
           <div class="card-body py-2">
             <h4 class="card-title">Your Rooms</h4>
@@ -48,7 +48,24 @@
                 v-for="room in rooms"
                 :key="room.id"
               >
-                {{ room.name }}
+                <section class="btn-group align-self-center" role="group" aria-label="Room Options">
+                  <button
+                    title="Delete Room"
+                    class="btn btn-outline-secondary btn-sm"
+                    @click="handleDelete(room.id)"
+                  >
+                    <FontAwesomeIcon icon="fa-trash" />
+                  </button>
+                  <RouterLink :to="`/`" class="btn btn-outline-secondary btn-sm" title="Check In">
+                    <FontAwesomeIcon icon="fa-user" />
+                  </RouterLink>
+                  <RouterLink :to="`/`" class="btn btn-outline-secondary btn-sm" title="Attendees">
+                    <FontAwesomeIcon icon="fa-video" />
+                  </RouterLink>
+                </section>
+                <section class="align-self-center pl-3 text-center">
+                  {{ room.name }}
+                </section>
                 <span class="text-muted small" v-if="room.createdBy">
                   (created by {{ room.createdBy }})</span
                 >
@@ -63,6 +80,7 @@
 
 <script setup>
 import { ref } from 'vue'
+import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome'
 
 const roomName = ref('')
 const roomNameRef = ref(null)
@@ -75,12 +93,18 @@ defineProps({
   },
 })
 
-const emit = defineEmits(['addRoom'])
+const emit = defineEmits(['addRoom', 'deleteRoom'])
 
 const handleAdd = () => {
   if (!roomName.value.trim()) return
   emit('addRoom', roomName.value)
   roomName.value = ''
   roomNameRef.value.focus()
+}
+
+const handleDelete = (roomId) => {
+  if (confirm('Are you sure you want to delete this room?')) {
+    emit('deleteRoom', roomId)
+  }
 }
 </script>
