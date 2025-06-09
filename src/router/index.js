@@ -3,6 +3,7 @@ import LoginPage from '../views/LoginPage.vue'
 import HomeView from '../views/HomeView.vue'
 import RegisterPage from '../views/RegisterPage.vue'
 import RoomsPage from '../views/RoomsPage.vue'
+import CheckInPage from '../views/CheckInPage.vue'
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
@@ -34,8 +35,18 @@ const router = createRouter({
       path: '/rooms',
       name: 'rooms',
       component: RoomsPage,
-      props: true
+      props: true,
     },
+    {
+      path: '/checkin/:hostID/:roomID',
+      name: 'checkin',
+      component: CheckInPage,
+    },
+    {
+      path: '/:pathMatch(.*)*',
+      redirect: '/',
+    },
+    // This is a default path, if invalid path, go to home page
   ],
 })
 

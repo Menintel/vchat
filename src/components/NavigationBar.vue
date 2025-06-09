@@ -1,11 +1,11 @@
 <template>
   <div class="fixed-top">
-    <nav class="navbar navbar-expand bg-primary navbar-dark rounded mt-2 h-10 mx-2 py-1">
+    <nav class="navbar navbar-expand bg-primary navbar-dark rounded-4 mt-2 h-10 mx-2 py-1">
       <div class="container-fluid">
         <RouterLink to="/" class="navbar-brand"
           ><span class="h2 pr-1">VChat</span>
           <span v-if="user" class="navbar-text small"
-            >: Hi <span class="font-weight-bold green">{{ user }}</span></span
+            >: Hi <span class="font-weight-bold green">{{ user.displayName }}</span></span
           >
         </RouterLink>
         <div class="navbar-nav ml-auto">
@@ -24,7 +24,11 @@
 
 <script setup>
 const { user, logout } = defineProps({
-  user: String,
+  user: {
+    type: Object,
+    required: false,
+    default: null,
+  },
   logout: Function,
 })
 </script>

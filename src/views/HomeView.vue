@@ -1,8 +1,12 @@
 <script setup>
 import HelloWorld from '../components/HelloWorld.vue'
 
-const props = defineProps({
-  user: String,
+defineProps({
+  user: {
+    type: Object,
+    required: false,
+    default: null,
+  },
 })
 </script>
 
@@ -10,7 +14,7 @@ const props = defineProps({
   <div class="mt-3">
     <div v-if="user" class="text-center">
       <HelloWorld msg="You did it!" />
-      Welcome <span class="font-weight-bold green">{{ props.user }}</span>
+      Welcome <span class="font-weight-bold green">{{ user.displayName }}</span>
     </div>
     <div v-else class="text-center">
       <HelloWorld msg="You did it!" />

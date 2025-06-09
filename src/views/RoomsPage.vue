@@ -3,7 +3,7 @@
     <div class="container">
       <div class="col-12 col-10">
         <h1 class="font-weight-light text-center">Add Room</h1>
-        <div class="card bg-light rounded-pill">
+        <div class="card bg-light rounded-4">
           <div class="card-body text-center">
             <form class="form-group">
               <div class="input-group input-group-lg">
@@ -16,14 +16,14 @@
                   v-model="roomName"
                   ref="roomNameRef"
                 />
-                <div class="input-group-append">
+                <div>
                   <button
                     class="btn btn-outline-primary rounded-pill mx-4"
                     type="submit"
                     id="buttonAdd"
                     @click.prevent="handleAdd"
                   >
-                    +
+                    Add Room
                   </button>
                 </div>
               </div>
@@ -56,7 +56,11 @@
                   >
                     <FontAwesomeIcon icon="fa-trash" />
                   </button>
-                  <RouterLink :to="`/`" class="btn btn-outline-secondary btn-sm" title="Check In">
+                  <RouterLink
+                    :to="`/checkin/${user?.uid}/${room.id}`"
+                    class="btn btn-outline-secondary btn-sm"
+                    title="Check In"
+                  >
                     <FontAwesomeIcon icon="fa-user" />
                   </RouterLink>
                   <RouterLink :to="`/`" class="btn btn-outline-secondary btn-sm" title="Attendees">
@@ -90,6 +94,11 @@ defineProps({
     type: Array,
     required: true,
     default: () => [],
+  },
+  user: {
+    type: Object,
+    required: false,
+    default: null,
   },
 })
 
