@@ -67,7 +67,7 @@ export default {
         console.log('Logged in as', user.email)
 
         // Redirect only after successful login
-        this.$router.push('/')
+        this.$router.push('/rooms')
       } catch (error) {
         console.error('Error logging in:', error)
         this.error = 'Failed to log in. Please try again.'

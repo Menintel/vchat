@@ -102,7 +102,7 @@ export default {
         console.log('Registered as', user.email)
 
         // Redirect only after successful registration
-        this.$router.push('/')
+        this.$router.push('/rooms')
       } catch (error) {
         console.error('Error registering:', error)
 

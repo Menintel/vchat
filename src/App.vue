@@ -18,6 +18,7 @@
 
 <script setup>
 import NavigationBar from './components/NavigationBar.vue'
+import { useRouter } from 'vue-router'
 
 import { ref, onMounted } from 'vue'
 import db from './db'
@@ -36,6 +37,7 @@ import {
 const user = ref(null)
 const message = ref('')
 const rooms = ref([])
+const router = useRouter()
 
 const logout = async () => {
   try {
@@ -125,6 +127,7 @@ const checkin = async (hostID, roomID) => {
         createdAt: serverTimestamp(),
       })
       message.value = `Successfully checked in to room "${roomID}"`
+      router.push(`/chat/${hostID}/${roomID}`)
     } else {
       message.value = `Room "${roomID}" not found`
     }

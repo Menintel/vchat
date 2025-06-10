@@ -4,6 +4,9 @@ import HomeView from '../views/HomeView.vue'
 import RegisterPage from '../views/RegisterPage.vue'
 import RoomsPage from '../views/RoomsPage.vue'
 import CheckInPage from '../views/CheckInPage.vue'
+import ChatPage from '../views/ChatPage.vue'
+
+import { getAuth } from 'firebase/auth'
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
@@ -41,6 +44,13 @@ const router = createRouter({
       path: '/checkin/:hostID/:roomID',
       name: 'checkin',
       component: CheckInPage,
+      meta: { requiresAuth: true },
+    },
+    {
+      path: '/chat/:hostID/:roomID',
+      name: 'chat',
+      component: ChatPage,
+      meta: { requiresAuth: true },
     },
     {
       path: '/:pathMatch(.*)*',
@@ -48,6 +58,22 @@ const router = createRouter({
     },
     // This is a default path, if invalid path, go to home page
   ],
+})
+
+router.beforeEach(async (to) => {
+  const requiresAuth = to.matched.some((record) => record.meta.requiresAuth)
+
+  return new Promise((resolve, reject) => {
+    const unsubscribe = getAuth().onAuthStateChanged((user) => {
+      unsubscribe() // Unsubscribe to prevent memory leaks
+
+      if (requiresAuth && !user) {
+        resolve('/login')
+      } else {
+        resolve() // Proceed with the navigation
+      }
+    }, reject)
+  })
 })
 
 export default router

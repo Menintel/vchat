@@ -63,7 +63,11 @@
                   >
                     <FontAwesomeIcon icon="fa-user" />
                   </RouterLink>
-                  <RouterLink :to="`/`" class="btn btn-outline-secondary btn-sm" title="Attendees">
+                  <RouterLink
+                    class="btn btn-outline-secondary btn-sm"
+                    title="chat"
+                    :to="`/chat/${user?.uid}/${room.id}`"
+                  >
                     <FontAwesomeIcon icon="fa-video" />
                   </RouterLink>
                 </section>
