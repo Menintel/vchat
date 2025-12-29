@@ -1,0 +1,10 @@
+{
+  "include": ["app"],
+  "exclude": ["**/node_modules", "**/__pycache__", ".venv", "alembic"],
+  "pythonVersion": "3.13",
+  "pythonPlatform": "Windows",
+  "extraPaths": ["."],
+  "typeCheckingMode": "basic",
+  "reportMissingImports": "warning",
+  "reportMissingTypeStubs": "none"
+}

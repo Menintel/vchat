@@ -1,24 +1,57 @@
+"""VChat Backend FastAPI Application."""
+
+from contextlib import asynccontextmanager
+
 from fastapi import FastAPI
-from pydantic import BaseModel
-from typing import List
+from fastapi.middleware.cors import CORSMiddleware
 
-app = FastAPI(title="VChat Backend (FastAPI)")
+from app.api.v1.router import router as api_v1_router
+from app.core.config import get_settings
 
-class Room(BaseModel):
-    id: str
-    name: str
-    description: str = ""
+settings = get_settings()
 
-# Simple health endpoint
+
+@asynccontextmanager
+async def lifespan(app: FastAPI):
+    """Application lifespan handler."""
+    # Startup
+    print("🚀 VChat Backend starting up...")
+    yield
+    # Shutdown
+    print("👋 VChat Backend shutting down...")
+
+
+app = FastAPI(
+    title="VChat Backend",
+    description="Backend API for VChat - Real-time group chat and event check-ins",
+    version="0.1.0",
+    lifespan=lifespan,
+)
+
+# CORS middleware
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=settings.cors_origins_list,
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
+
+# Include API routes
+app.include_router(api_v1_router)
+
+
 @app.get("/health")
 async def health():
-    return {"status": "ok"}
+    """Health check endpoint."""
+    return {"status": "ok", "version": "0.1.0"}
 
-# Read-only endpoint returning sample rooms
-@app.get("/api/rooms", response_model=List[Room])
-async def get_rooms():
-    # Replace this with a real DB call when backend auth/db is configured
-    return [
-        {"id": "1", "name": "General", "description": "General discussion"},
-        {"id": "2", "name": "Check-in", "description": "Event check-ins"},
-    ]
+
+@app.get("/")
+async def root():
+    """Root endpoint."""
+    return {
+        "message": "Welcome to VChat API",
+        "docs": "/docs",
+        "health": "/health",
+    }
