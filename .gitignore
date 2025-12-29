@@ -1,0 +1,12 @@
+node_modules
+# Environment files
+.env
+
+# Backend python venv and caches
+apps/backend/.venv/
+**/__pycache__/
+**/*.pyc
+
+# pnpm logs
+pnpm-install.log
+

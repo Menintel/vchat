@@ -10,26 +10,37 @@ This template should help get you started developing with Vue 3 in Vite.
 
 See [Vite Configuration Reference](https://vite.dev/config/).
 
-## Project Setup
+## Project Setup (pnpm monorepo)
+
+Install dependencies (requires pnpm):
 
 ```sh
-npm install
+pnpm install
+# or install pnpm: npm i -g pnpm
 ```
 
-### Compile and Hot-Reload for Development
+### Run the frontend (dev)
 
 ```sh
-npm run dev
+pnpm --filter ./apps/frontend dev
+# or from root: pnpm dev
 ```
 
-### Compile and Minify for Production
+### Build the frontend
 
 ```sh
-npm run build
+pnpm --filter ./apps/frontend build
+# or from root: pnpm build
 ```
 
-### Lint with [ESLint](https://eslint.org/)
+### Run backend (if added)
 
 ```sh
-npm run lint
+pnpm --filter ./apps/backend dev
+```
+
+### Lint (workspace)
+
+```sh
+pnpm -w -r run lint
 ```

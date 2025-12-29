@@ -3,12 +3,13 @@
   "version": "0.0.0",
   "private": true,
   "workspaces": [
+    "apps/*",
     "packages/*"
   ],
   "scripts": {
-    "dev": "pnpm --filter frontend dev",
-    "build": "pnpm --filter frontend build",
-    "preview": "pnpm --filter frontend preview",
+    "dev": "pnpm --filter ./apps/frontend dev",
+    "build": "pnpm --filter ./apps/frontend build",
+    "preview": "pnpm --filter ./apps/frontend preview",
     "lint": "pnpm -w -r run lint",
     "format": "pnpm -w -r run format",
     "bootstrap": "pnpm -w install"
