@@ -1,0 +1,25 @@
+# LiveKit Server Configuration
+# See: https://docs.livekit.io/home/self-hosting/deployment/
+
+port: 7880
+
+rtc:
+  port_range_start: 50000
+  port_range_end: 60000
+  use_external_ip: false
+  tcp_port: 7881
+  udp_port: 7882
+
+# API Keys - CHANGE IN PRODUCTION!
+# Generate new keys: livekit-server generate-keys
+keys:
+  devAPIKeyXXX: devSecretYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYY
+
+logging:
+  level: info
+  json: false
+
+# Room settings
+room:
+  empty_timeout: 300
+  max_participants: 50

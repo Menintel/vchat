@@ -1,75 +1,179 @@
-# Project Plan — VChat ✅
+# VChat Project Plan — Video Conferencing Platform 🎥
 
-## Repository structure (tree)
-```
-.
-├─ .gitignore
-├─ eslint.config.js
-├─ index.html
-├─ jsconfig.json
-├─ package.json
-├─ package-lock.json
-├─ README.md
-├─ vite.config.js
-├─ public/
-│  └─ favicon.ico
-├─ plan/
-│  ├─ plan.md
-│  └─ vchat.md
-└─ src/
-   ├─ App.vue
-   ├─ db.js
-   ├─ main.js
-   ├─ assets/
-   │  ├─ base.css
-   │  ├─ main.css
-   │  └─ logo.svg
-   ├─ components/
-   │  ├─ HelloWorld.vue
-   │  ├─ NavigationBar.vue
-   │  └─ icons/
-   │     ├─ IconCommunity.vue
-   │     ├─ IconDocumentation.vue
-   │     ├─ IconEcosystem.vue
-   │     ├─ IconSupport.vue
-   │     └─ IconTooling.vue
-   ├─ router/
-   │  └─ index.js
-   └─ views/
-      ├─ AboutView.vue
-      ├─ ChatPage.vue
-      ├─ CheckInPage.vue
-      ├─ HomeView.vue
-      ├─ LoginPage.vue
-      ├─ RegisterPage.vue
-      └─ RoomsPage.vue
-```
-
-### Intent & usage
-- This `plan/plan.md` documents the repo layout and short-to-medium term roadmap. Use it to guide implementation, tests, and deployment.
-
-## Short-term roadmap (next 1–2 weeks) 🔜
-1. Finalize `vchat.md` spec (complete). ✅
-2. Add developer docs: update `README.md` with run/build/test instructions.
-3. Add basic CI: lint, unit tests, build on push (GitHub Actions).
-4. Configure deployment (Netlify/Vercel) and add environment variables (Firebase/Secrets).
-
-## Medium-term milestones (1–3 months) 📈
-- Authentication (email + OAuth), user profiles.
-- Real-time chat & room management (messages, presence, typing indicators).
-- Check-in flows and attendee management (organizers vs attendees).
-- Polishing UI, accessibility, and mobile responsiveness.
-
-## Tasks & conventions
-- Add pre-commit hooks (Husky) and formatting (Prettier + ESLint).
-- Use semantic commit messages and feature branches for PRs.
-- Keep `src/db.js` as the single DB access point for easier testing.
-
-## Acceptance criteria (examples)
-- Users can create/join rooms and exchange messages in real time.
-- Organizers can view and delete attendees for check-ins.
-- All endpoints are protected with appropriate Firestore rules.
+> **Last Updated:** 2025-12-30  
+> **Status:** Planning Phase — Major Architecture Redesign
 
 ---
 
-> Next step: review `vchat.md` and tell me if you'd like additional diagrams (ER, sequence) or a task breakdown into issues.
+## Target Project Structure
+
+```
+VChat/
+│
+├── apps/
+│   ├── web/                          # Vue 3 Frontend
+│   │   ├── src/
+│   │   │   ├── app/
+│   │   │   │   ├── main.ts           # App bootstrap
+│   │   │   │   └── router.ts         # Vue Router config
+│   │   │   │
+│   │   │   ├── pages/
+│   │   │   │   ├── Login.vue         # Auth pages
+│   │   │   │   ├── Register.vue
+│   │   │   │   ├── Lobby.vue         # Room browser / create
+│   │   │   │   └── Room.vue          # Video conference room
+│   │   │   │
+│   │   │   ├── components/
+│   │   │   │   ├── conference/
+│   │   │   │   │   ├── VideoGrid.vue
+│   │   │   │   │   ├── ParticipantTile.vue
+│   │   │   │   │   └── ActiveSpeaker.vue
+│   │   │   │   │
+│   │   │   │   ├── controls/
+│   │   │   │   │   ├── MicToggle.vue
+│   │   │   │   │   ├── CameraToggle.vue
+│   │   │   │   │   ├── ScreenShare.vue
+│   │   │   │   │   └── LeaveButton.vue
+│   │   │   │   │
+│   │   │   │   ├── room/
+│   │   │   │   │   ├── RoomCard.vue
+│   │   │   │   │   ├── RoomList.vue
+│   │   │   │   │   └── CreateRoomModal.vue
+│   │   │   │   │
+│   │   │   │   └── common/
+│   │   │   │       ├── Button.vue
+│   │   │   │       ├── Modal.vue
+│   │   │   │       └── Navbar.vue
+│   │   │   │
+│   │   │   ├── livekit/
+│   │   │   │   ├── client.ts         # Room connect / disconnect
+│   │   │   │   ├── tracks.ts         # Audio/video helpers
+│   │   │   │   ├── events.ts         # Participant events
+│   │   │   │   └── layout.ts         # Grid / speaker logic
+│   │   │   │
+│   │   │   ├── firebase/
+│   │   │   │   ├── config.ts         # Firebase init
+│   │   │   │   └── auth.ts           # Firebase Auth helpers
+│   │   │   │
+│   │   │   ├── services/
+│   │   │   │   ├── auth.service.ts   # Auth business logic
+│   │   │   │   ├── room.service.ts   # Room CRUD
+│   │   │   │   └── livekit.service.ts # Backend token calls
+│   │   │   │
+│   │   │   ├── store/
+│   │   │   │   ├── auth.store.ts     # Pinia auth state
+│   │   │   │   └── room.store.ts     # Pinia room state
+│   │   │   │
+│   │   │   ├── types/
+│   │   │   │   ├── participant.ts
+│   │   │   │   ├── room.ts
+│   │   │   │   └── user.ts
+│   │   │   │
+│   │   │   └── styles/
+│   │   │       ├── variables.css
+│   │   │       └── main.css
+│   │   │
+│   │   ├── index.html
+│   │   ├── vite.config.ts
+│   │   ├── tsconfig.json
+│   │   └── package.json
+│   │
+│   └── api/                          # FastAPI Backend
+│       ├── app/
+│       │   ├── main.py               # FastAPI app
+│       │   ├── config.py             # Settings (env vars)
+│       │   │
+│       │   ├── core/
+│       │   │   ├── firebase.py       # Verify Firebase tokens
+│       │   │   ├── livekit.py        # JWT generation
+│       │   │   └── security.py       # Auth dependencies
+│       │   │
+│       │   ├── routes/
+│       │   │   ├── auth.py           # /auth endpoints
+│       │   │   ├── rooms.py          # /rooms + /join
+│       │   │   └── health.py         # /health check
+│       │   │
+│       │   └── schemas/
+│       │       ├── room.py
+│       │       ├── token.py
+│       │       └── user.py
+│       │
+│       ├── requirements.txt
+│       ├── Dockerfile
+│       └── pytest.ini
+│
+├── infra/
+│   ├── livekit/
+│   │   ├── livekit.yaml              # LiveKit server config
+│   │   └── docker-compose.yml        # Local dev setup
+│   │
+│   ├── nginx/
+│   │   └── nginx.conf                # Reverse proxy
+│   │
+│   └── docker-compose.yml            # Full stack compose
+│
+├── firebase/
+│   ├── firebase.json                 # Firebase project config
+│   ├── firestore.rules               # Security rules
+│   └── firestore.indexes.json        # Indexes
+│
+├── .env.example
+├── .gitignore
+├── pnpm-workspace.yaml               # Monorepo config
+├── Makefile
+└── README.md
+```
+
+---
+
+## Technology Stack
+
+| Layer | Technology | Version | Purpose |
+|-------|-----------|---------|---------|
+| **Frontend** | Vue 3 | 3.5+ | UI Framework |
+| | TypeScript | 5.x | Type Safety |
+| | Vite | 6.x | Build Tool |
+| | Pinia | 2.x | State Management |
+| | Vue Router | 4.x | Navigation |
+| | LiveKit Vue | Latest | Video Components |
+| **Backend** | FastAPI | 0.115+ | REST API |
+| | Python | 3.12+ | Runtime |
+| | livekit-api | Latest | Token Generation |
+| | firebase-admin | Latest | Token Verification |
+| **Video** | LiveKit | 1.8+ | WebRTC SFU |
+| **Auth** | Firebase Auth | Latest | User Authentication |
+| **Database** | Firestore | Latest | Document DB |
+| **Infra** | Docker | Latest | Containerization |
+| | NGINX | Latest | Reverse Proxy |
+
+---
+
+## Migration Notes
+
+### Current State
+- Simple Firebase-only chat app
+- Rooms stored under `users/{uid}/rooms`
+- No video conferencing
+- No backend API
+
+### Target State
+- Full video conferencing with LiveKit
+- Public room discovery
+- FastAPI backend for token generation
+- Docker-based local development
+
+---
+
+## Quick Reference
+
+| Command | Description |
+|---------|-------------|
+| `pnpm dev` | Start all services |
+| `pnpm dev:web` | Start frontend only |
+| `pnpm dev:api` | Start backend only |
+| `make livekit` | Start LiveKit server |
+| `make test` | Run all tests |
+
+---
+
+> **See:** [vchat.md](./vchat.md) for detailed 12-phase implementation plan.

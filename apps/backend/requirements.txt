@@ -8,5 +8,11 @@ asyncpg==0.30.0
 alembic==1.14.0
 pydantic-settings==2.6.1
 
+# LiveKit
+livekit-api>=0.7.0
+
+# Firebase Admin
+firebase-admin>=6.5.0
+
 # Type stubs (for IDE)
 sqlalchemy-stubs
