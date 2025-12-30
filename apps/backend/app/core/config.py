@@ -14,7 +14,7 @@ class Settings(BaseSettings):
     )
 
     # Database
-    database_url: str = "postgresql+asyncpg://postgres:postgres@localhost:5432/vchat"
+    database_url: str = "postgresql+asyncpg://user:password@localhost:5432/dbname"
 
     # Application
     secret_key: str = "dev-secret-key-change-in-production"

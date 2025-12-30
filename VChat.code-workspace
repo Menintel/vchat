@@ -1,12 +1,13 @@
 {
 	"folders": [
 		{
-			"name": "✨ vchat-monorepo",
-			"path": ".."
+			"path": "."
 		},
 		{
-			"name": "🚀 vchat",
-			"path": "../apps/frontend"
+			"path": "apps/backend"
+		},
+		{
+			"path": "apps/frontend"
 		}
 	],
 	"settings": {}
