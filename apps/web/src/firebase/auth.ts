@@ -1,16 +1,16 @@
 import {
-  signInWithEmailAndPassword,
   createUserWithEmailAndPassword,
-  signOut,
-  onAuthStateChanged,
-  updateProfile,
   GoogleAuthProvider,
+  onAuthStateChanged,
+  signInWithEmailAndPassword,
   signInWithPopup,
+  signOut,
   type User,
   type UserCredential,
+  updateProfile,
 } from 'firebase/auth'
-import { auth } from './config'
 import { useAuthStore } from '@/store/auth.store'
+import { auth } from './config'
 
 /**
  * Sign in with email and password
@@ -18,7 +18,7 @@ import { useAuthStore } from '@/store/auth.store'
 export async function loginWithEmail(email: string, password: string): Promise<User> {
   const authStore = useAuthStore()
   authStore.setInitializing()
-  
+
   try {
     const credential: UserCredential = await signInWithEmailAndPassword(auth, email, password)
     authStore.setUser(credential.user)
@@ -40,15 +40,15 @@ export async function registerWithEmail(
 ): Promise<User> {
   const authStore = useAuthStore()
   authStore.setInitializing()
-  
+
   try {
     const credential: UserCredential = await createUserWithEmailAndPassword(auth, email, password)
-    
+
     // Update display name if provided
     if (displayName && credential.user) {
       await updateProfile(credential.user, { displayName })
     }
-    
+
     authStore.setUser(credential.user)
     return credential.user
   } catch (error) {
@@ -64,7 +64,7 @@ export async function registerWithEmail(
 export async function loginWithGoogle(): Promise<User> {
   const authStore = useAuthStore()
   authStore.setInitializing()
-  
+
   try {
     const provider = new GoogleAuthProvider()
     const credential: UserCredential = await signInWithPopup(auth, provider)
@@ -82,7 +82,7 @@ export async function loginWithGoogle(): Promise<User> {
  */
 export async function logout(): Promise<void> {
   const authStore = useAuthStore()
-  
+
   try {
     await signOut(auth)
     authStore.setUser(null)
@@ -95,14 +95,17 @@ export async function logout(): Promise<void> {
 /**
  * Initialize auth state listener
  * Should be called once at app startup
+ * @returns Unsubscribe function to remove the listener
  */
-export function initAuthListener(): void {
+export function initAuthListener(): () => void {
   const authStore = useAuthStore()
   authStore.setInitializing()
-  
-  onAuthStateChanged(auth, (user) => {
+
+  const unsubscribe = onAuthStateChanged(auth, (user) => {
     authStore.setUser(user)
   })
+
+  return unsubscribe
 }
 
 /**

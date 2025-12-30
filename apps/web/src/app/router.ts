@@ -8,7 +8,7 @@ const HomeView = () => import('@/views/HomeView.vue')
 const AboutView = () => import('@/views/AboutView.vue')
 const CheckInPage = () => import('@/views/CheckInPage.vue')
 const ChatPage = () => import('@/views/ChatPage.vue')
-const LobbyPage = () => import('@/pages/Lobby.vue')
+const LobbyPage = () => import('@/pages/LobbyPage.vue')
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
@@ -69,20 +69,26 @@ const router = createRouter({
 router.beforeEach(async (to: RouteLocationNormalized) => {
   const requiresAuth = to.matched.some((record) => record.meta.requiresAuth)
   const guestOnly = to.matched.some((record) => record.meta.guestOnly)
-  
-  const user = await waitForAuth()
-  
+
+  let user
+  try {
+    user = await waitForAuth()
+  } catch (error) {
+    console.error('Authentication check failed:', error)
+    // Decide on fallback behavior: allow navigation or redirect to error page
+    return true // or return { name: 'login' }
+  }
+
   // Redirect to login if auth required but not logged in
   if (requiresAuth && !user) {
     return { name: 'login', query: { redirect: to.fullPath } }
   }
-  
+
   // Redirect to home if guest-only page but logged in
   if (guestOnly && user) {
     return { name: 'rooms' }
   }
-  
+
   return true
 })
-
 export default router

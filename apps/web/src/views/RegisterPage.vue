@@ -120,11 +120,11 @@
 </template>
 
 <script setup lang="ts">
-import { ref, computed } from 'vue'
-import { useRouter } from 'vue-router'
-import { useAuthStore } from '@/store/auth.store'
-import { registerWithEmail, loginWithGoogle } from '@/firebase/auth'
 import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome'
+import { computed, ref } from 'vue'
+import { useRouter } from 'vue-router'
+import { loginWithGoogle, registerWithEmail } from '@/firebase/auth'
+import { useAuthStore } from '@/store/auth.store'
 
 const router = useRouter()
 const authStore = useAuthStore()
@@ -139,22 +139,22 @@ const isLoading = computed(() => authStore.isLoading)
 
 async function handleRegister() {
   error.value = null
-  
+
   if (!displayName.value || !email.value || !password.value) {
     error.value = 'Please fill in all fields'
     return
   }
-  
+
   if (password.value !== confirmPassword.value) {
     error.value = 'Passwords do not match'
     return
   }
-  
+
   if (password.value.length < 6) {
     error.value = 'Password must be at least 6 characters'
     return
   }
-  
+
   try {
     await registerWithEmail(email.value, password.value, displayName.value)
     router.push('/lobby')
@@ -173,7 +173,7 @@ async function handleRegister() {
 
 async function handleGoogleSignup() {
   error.value = null
-  
+
   try {
     await loginWithGoogle()
     router.push('/lobby')

@@ -1,6 +1,6 @@
-import { ref, computed } from 'vue'
-import { defineStore } from 'pinia'
 import type { User } from 'firebase/auth'
+import { defineStore } from 'pinia'
+import { computed, ref } from 'vue'
 
 export type AuthState = 'UNAUTHENTICATED' | 'INITIALIZING' | 'READY'
 

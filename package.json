@@ -13,8 +13,22 @@
     "build": "pnpm --filter ./apps/web build",
     "preview": "pnpm --filter ./apps/web preview",
     "typecheck": "pnpm --filter ./apps/web vue-tsc --noEmit",
-    "lint": "pnpm -w -r run lint",
-    "format": "pnpm -w -r run format",
-    "bootstrap": "pnpm -w install"
+    "lint": "biome lint .",
+    "lint:fix": "biome lint --write .",
+    "format": "biome format --write .",
+    "format:check": "biome format .",
+    "check": "biome check --write .",
+    "bootstrap": "pnpm -w install",
+    "prepare": "husky"
+  },
+  "lint-staged": {
+    "*.{js,ts,jsx,tsx,vue,json,css,md}": [
+      "biome check --write --no-errors-on-unmatched"
+    ]
+  },
+  "devDependencies": {
+    "@biomejs/biome": "^2.3.10",
+    "husky": "^9.1.7",
+    "lint-staged": "^16.2.7"
   }
 }

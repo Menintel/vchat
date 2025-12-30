@@ -91,11 +91,11 @@
 </template>
 
 <script setup lang="ts">
-import { ref, computed } from 'vue'
-import { useRouter, useRoute } from 'vue-router'
-import { useAuthStore } from '@/store/auth.store'
-import { loginWithEmail, loginWithGoogle } from '@/firebase/auth'
 import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome'
+import { computed, ref } from 'vue'
+import { useRoute, useRouter } from 'vue-router'
+import { loginWithEmail, loginWithGoogle } from '@/firebase/auth'
+import { useAuthStore } from '@/store/auth.store'
 
 const router = useRouter()
 const route = useRoute()
@@ -107,31 +107,49 @@ const error = ref<string | null>(null)
 
 const isLoading = computed(() => authStore.isLoading)
 
+/**
+ * Validates that a redirect URL is a safe internal path
+ * Rejects absolute URLs and external hosts
+ */
+function isValidRedirect(redirect: string | null | undefined): redirect is string {
+  if (!redirect || typeof redirect !== 'string') return false
+  // Must start with / and not be a protocol-relative URL
+  if (!redirect.startsWith('/') || redirect.startsWith('//')) return false
+  // Reject any URLs with protocols
+  if (redirect.includes('://')) return false
+  return true
+}
+
+function getSafeRedirect(): string {
+  const redirect = route.query.redirect as string | undefined
+  return isValidRedirect(redirect) ? redirect : '/lobby'
+}
+
 async function handleLogin() {
   error.value = null
-  
+
   if (!email.value || !password.value) {
     error.value = 'Please enter an email and password'
     return
   }
-  
+
   try {
     await loginWithEmail(email.value, password.value)
-    const redirect = route.query.redirect as string
-    router.push(redirect || '/lobby')
-  } catch (err) {
+    router.push(getSafeRedirect())
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  } catch (_err) {
     error.value = authStore.error || 'Failed to sign in. Please try again.'
   }
 }
 
 async function handleGoogleLogin() {
   error.value = null
-  
+
   try {
     await loginWithGoogle()
-    const redirect = route.query.redirect as string
-    router.push(redirect || '/lobby')
-  } catch (err) {
+    router.push(getSafeRedirect())
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  } catch (_err) {
     error.value = authStore.error || 'Google sign in failed. Please try again.'
   }
 }

@@ -1,6 +1,6 @@
-import { ref, computed } from 'vue'
-import { defineStore } from 'pinia'
 import type { Room as LiveKitRoom, LocalParticipant, RemoteParticipant } from 'livekit-client'
+import { defineStore } from 'pinia'
+import { computed, ref } from 'vue'
 
 export interface RoomInfo {
   id: string
@@ -25,7 +25,7 @@ export const useRoomStore = defineStore('room', () => {
   const isConnected = computed(() => connectionState.value === 'CONNECTED')
   const isConnecting = computed(() => connectionState.value === 'CONNECTING')
   const localParticipant = computed(() => currentRoom.value?.localParticipant ?? null)
-  const remoteParticipants = computed(() => 
+  const remoteParticipants = computed(() =>
     currentRoom.value ? Array.from(currentRoom.value.remoteParticipants.values()) : []
   )
   const participantCount = computed(() => remoteParticipants.value.length + 1)
@@ -40,7 +40,7 @@ export const useRoomStore = defineStore('room', () => {
   }
 
   function removeRoom(roomId: string) {
-    rooms.value = rooms.value.filter(r => r.id !== roomId)
+    rooms.value = rooms.value.filter((r) => r.id !== roomId)
   }
 
   function setCurrentRoom(room: LiveKitRoom | null) {

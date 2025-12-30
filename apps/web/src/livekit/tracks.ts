@@ -7,7 +7,7 @@ import { useRoomStore } from '@/store/room.store'
 export async function toggleCamera(enabled?: boolean): Promise<void> {
   const roomStore = useRoomStore()
   const participant = roomStore.localParticipant
-  
+
   if (!participant) {
     throw new Error('Not connected to a room')
   }
@@ -21,7 +21,7 @@ export async function toggleCamera(enabled?: boolean): Promise<void> {
 export async function toggleMicrophone(enabled?: boolean): Promise<void> {
   const roomStore = useRoomStore()
   const participant = roomStore.localParticipant
-  
+
   if (!participant) {
     throw new Error('Not connected to a room')
   }
@@ -35,7 +35,7 @@ export async function toggleMicrophone(enabled?: boolean): Promise<void> {
 export async function toggleScreenShare(enabled?: boolean): Promise<void> {
   const roomStore = useRoomStore()
   const participant = roomStore.localParticipant
-  
+
   if (!participant) {
     throw new Error('Not connected to a room')
   }

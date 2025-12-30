@@ -2,33 +2,33 @@ import '../styles/design-system.css'
 import '../assets/main.css'
 import 'bootstrap/dist/css/bootstrap.css'
 
-import { createApp } from 'vue'
-import App from '../App.vue'
-import router from './router'
-import { pinia } from '../store'
-import { initAuthListener } from '../firebase/auth'
-import { createBootstrap } from 'bootstrap-vue-next'
 import { library } from '@fortawesome/fontawesome-svg-core'
-import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome'
-import { 
-  faTrash, 
-  faVideo, 
-  faPodcast, 
-  faUser,
+import { faGoogle } from '@fortawesome/free-brands-svg-icons'
+import {
+  faDesktop,
   faMicrophone,
   faMicrophoneSlash,
-  faVideoSlash,
-  faDesktop,
   faPhone,
+  faPodcast,
   faSignOutAlt,
+  faTrash,
+  faUser,
+  faVideo,
+  faVideoSlash,
 } from '@fortawesome/free-solid-svg-icons'
-import { faGoogle } from '@fortawesome/free-brands-svg-icons'
+import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome'
+import { createBootstrap } from 'bootstrap-vue-next'
+import { createApp } from 'vue'
+import App from '../App.vue'
+import { initAuthListener } from '../firebase/auth'
+import { pinia } from '../store'
+import router from './router'
 
 // Add Font Awesome icons
 library.add(
-  faTrash, 
-  faVideo, 
-  faUser, 
+  faTrash,
+  faVideo,
+  faUser,
   faPodcast,
   faMicrophone,
   faMicrophoneSlash,
@@ -36,7 +36,7 @@ library.add(
   faDesktop,
   faPhone,
   faSignOutAlt,
-  faGoogle,
+  faGoogle
 )
 
 const app = createApp(App)

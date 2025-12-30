@@ -1,19 +1,18 @@
-import { initializeApp, type FirebaseApp } from 'firebase/app'
-import { getAuth, type Auth } from 'firebase/auth'
-import { getFirestore, type Firestore } from 'firebase/firestore'
+import { type FirebaseApp, initializeApp } from 'firebase/app'
+import { type Auth, getAuth } from 'firebase/auth'
+import { type Firestore, getFirestore } from 'firebase/firestore'
 
 /**
  * Firebase configuration loaded from environment variables
  */
 const firebaseConfig = {
-  apiKey: "AIzaSyCWugE__f_fDjoS3TzVwZFTIki0C9FcuRk",
-  authDomain: "vchat-ers.firebaseapp.com",
-  projectId: "vchat-ers",
-  storageBucket: "vchat-ers.firebasestorage.app",
-  messagingSenderId: "504298001405",
-  appId: "1:504298001405:web:b036f25bda1d3c6cefbf94"
-};
-
+  apiKey: import.meta.env.VITE_FIREBASE_API_KEY,
+  authDomain: import.meta.env.VITE_FIREBASE_AUTH_DOMAIN,
+  projectId: import.meta.env.VITE_FIREBASE_PROJECT_ID,
+  storageBucket: import.meta.env.VITE_FIREBASE_STORAGE_BUCKET,
+  messagingSenderId: import.meta.env.VITE_FIREBASE_MESSAGING_SENDER_ID,
+  appId: import.meta.env.VITE_FIREBASE_APP_ID,
+}
 // Initialize Firebase
 let app: FirebaseApp
 let auth: Auth

@@ -55,7 +55,7 @@
       <div class="features-grid">
         <div class="feature-card glass-card">
           <div class="feature-icon">
-            <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <svg role="img" aria-label="Audio icon" width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
               <polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"/>
               <path d="M15.54 8.46a5 5 0 0 1 0 7.07"/>
               <path d="M19.07 4.93a10 10 0 0 1 0 14.14"/>
@@ -66,7 +66,7 @@
         </div>
         <div class="feature-card glass-card">
           <div class="feature-icon">
-            <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <svg role="img" aria-label="Screen sharing icon" width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
               <rect x="2" y="3" width="20" height="14" rx="2"/>
               <path d="M8 21h8"/>
               <path d="M12 17v4"/>
@@ -77,7 +77,7 @@
         </div>
         <div class="feature-card glass-card">
           <div class="feature-icon">
-            <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <svg role="img" aria-label="Unlimited rooms icon" width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
               <path d="M12 2L2 7l10 5 10-5-10-5z"/>
               <path d="M2 17l10 5 10-5"/>
               <path d="M2 12l10 5 10-5"/>
@@ -133,7 +133,18 @@
   height: 8px;
   border-radius: 50%;
   background: var(--color-success);
-  animation: pulse 2s infinite;
+  animation: badge-pulse 2s infinite;
+}
+
+@keyframes badge-pulse {
+  0%, 100% {
+    opacity: 1;
+    transform: scale(1);
+  }
+  50% {
+    opacity: 0.5;
+    transform: scale(1.1);
+  }
 }
 
 .hero-title {

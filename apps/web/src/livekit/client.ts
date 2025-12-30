@@ -27,12 +27,12 @@ export async function connectToRoom(
   options: Partial<RoomOptions> = {}
 ): Promise<Room> {
   const roomStore = useRoomStore()
-  
+
   try {
     roomStore.setConnectionState('CONNECTING')
 
     const room = new Room({ ...DEFAULT_ROOM_OPTIONS, ...options })
-    
+
     // Set up event handlers
     room.on(RoomEvent.Disconnected, () => {
       roomStore.setConnectionState('DISCONNECTED')
@@ -57,10 +57,10 @@ export async function connectToRoom(
 
     // Connect to the room
     await room.connect(serverUrl, token)
-    
+
     roomStore.setCurrentRoom(room)
     roomStore.setConnectionState('CONNECTED')
-    
+
     return room
   } catch (error) {
     roomStore.setConnectionState('DISCONNECTED')

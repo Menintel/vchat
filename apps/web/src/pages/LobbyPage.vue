@@ -127,12 +127,12 @@
 </template>
 
 <script setup lang="ts">
-import { ref, onMounted } from 'vue'
-import { useRouter } from 'vue-router'
-import { useAuthStore } from '@/store/auth.store'
 import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome'
-import { collection, addDoc, onSnapshot, serverTimestamp, query, where } from 'firebase/firestore'
+import { addDoc, collection, onSnapshot, query, serverTimestamp, where } from 'firebase/firestore'
+import { onMounted, onUnmounted, ref } from 'vue'
+import { useRouter } from 'vue-router'
 import { db } from '@/firebase/config'
+import { useAuthStore } from '@/store/auth.store'
 
 interface RoomInfo {
   id: string
@@ -152,28 +152,45 @@ const isLoading = ref(true)
 const showCreateModal = ref(false)
 const newRoomName = ref('')
 const isPublic = ref(true)
+const error = ref<string | null>(null)
+
+let unsubscribe: (() => void) | null = null
 
 onMounted(() => {
   const roomsRef = collection(db, 'rooms')
   const publicRoomsQuery = query(roomsRef, where('isPublic', '==', true))
-  
-  onSnapshot(publicRoomsQuery, (snapshot) => {
-    rooms.value = snapshot.docs.map(doc => ({
-      id: doc.id,
-      name: doc.data().name,
-      hostId: doc.data().hostId,
-      hostName: doc.data().hostName,
-      isPublic: doc.data().isPublic,
-      activeParticipants: doc.data().activeParticipants || 0,
-      createdAt: doc.data().createdAt?.toDate() || new Date(),
-    }))
-    isLoading.value = false
-  })
+
+  unsubscribe = onSnapshot(
+    publicRoomsQuery,
+    (snapshot) => {
+      rooms.value = snapshot.docs.map((doc) => ({
+        id: doc.id,
+        name: doc.data().name,
+        hostId: doc.data().hostId,
+        hostName: doc.data().hostName,
+        isPublic: doc.data().isPublic,
+        activeParticipants: doc.data().activeParticipants || 0,
+        createdAt: doc.data().createdAt?.toDate() || new Date(),
+      }))
+      isLoading.value = false
+    },
+    (err) => {
+      console.error('Error fetching rooms:', err)
+      error.value = 'Failed to load rooms'
+      isLoading.value = false
+    }
+  )
+})
+
+onUnmounted(() => {
+  if (unsubscribe) {
+    unsubscribe()
+  }
 })
 
 async function createRoom() {
   if (!newRoomName.value.trim() || !authStore.user) return
-  
+
   try {
     const roomsRef = collection(db, 'rooms')
     const docRef = await addDoc(roomsRef, {
@@ -184,10 +201,10 @@ async function createRoom() {
       activeParticipants: 0,
       createdAt: serverTimestamp(),
     })
-    
+
     showCreateModal.value = false
     newRoomName.value = ''
-    
+
     router.push(`/chat/${authStore.uid}/${docRef.id}`)
   } catch (error) {
     console.error('Error creating room:', error)

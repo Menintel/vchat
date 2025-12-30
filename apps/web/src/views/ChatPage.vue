@@ -106,20 +106,13 @@
 </template>
 
 <script setup>
-import { ref, onMounted } from "vue";
-import { useRoute, useRouter } from "vue-router";
-import db from "../db";
-import {
-  doc,
-  getDoc,
-  collection,
-  onSnapshot,
-  deleteDoc,
-  updateDoc,
-} from "firebase/firestore";
-import { FontAwesomeIcon } from "@fortawesome/vue-fontawesome";
+import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome'
+import { collection, deleteDoc, doc, getDoc, onSnapshot, updateDoc } from 'firebase/firestore'
+import { onMounted, ref } from 'vue'
+import { useRoute, useRouter } from 'vue-router'
+import db from '../db'
 
-const emit = defineEmits(["checkin"]);
+const emit = defineEmits(['checkin'])
 
 // Props
 const props = defineProps({
@@ -127,181 +120,150 @@ const props = defineProps({
     type: [Object, null],
     required: true,
   },
-});
+})
 
 // Routing
-const route = useRoute();
-const router = useRouter();
-const hostID = route.params.hostID;
-const roomID = route.params.roomID;
+const route = useRoute()
+const router = useRouter()
+const hostID = route.params.hostID
+const roomID = route.params.roomID
 
 // State
-const roomName = ref(null);
-const hostDisplayName = ref(null);
-const message = ref("");
+const roomName = ref(null)
+const hostDisplayName = ref(null)
+const message = ref('')
 
 // Video Meeting State
-const meetingActive = ref(false);
-const jitsiUrl = ref("");
-const iframeRef = ref(null);
+const meetingActive = ref(false)
+const jitsiUrl = ref('')
+const iframeRef = ref(null)
 
 // Variables
-const attendeesPending = ref([]);
-const attendeesApproved = ref([]);
-const attendeeApproved = ref(false);
-const attendeeJoined = ref(false);
+const attendeesPending = ref([])
+const attendeesApproved = ref([])
+const attendeeApproved = ref(false)
+const attendeeJoined = ref(false)
 
 onMounted(() => {
-  const roomRef = doc(db, "users", hostID, "rooms", roomID);
+  const roomRef = doc(db, 'users', hostID, 'rooms', roomID)
 
   // Get room name
   getDoc(roomRef).then((docSnap) => {
     if (docSnap.exists()) {
-      roomName.value = docSnap.data().name;
-      hostDisplayName.value = docSnap.data().createdBy || "Unknown";
+      roomName.value = docSnap.data().name
+      hostDisplayName.value = docSnap.data().createdBy || 'Unknown'
     } else {
-      router.replace("/");
+      router.replace('/')
     }
-  });
+  })
 
   // Real-time listener for attendees
-  const attendeesRef = collection(
-    db,
-    "users",
-    hostID,
-    "rooms",
-    roomID,
-    "attendees"
-  );
+  const attendeesRef = collection(db, 'users', hostID, 'rooms', roomID, 'attendees')
   onSnapshot(attendeesRef, (querySnapshot) => {
-    const tempPending = [];
-    const tempApproved = [];
-    let amCheckedIn = false;
-    let currentUserApproved = false;
+    const tempPending = []
+    const tempApproved = []
+    let amCheckedIn = false
+    let currentUserApproved = false
 
     querySnapshot.forEach((doc) => {
       const attendeeData = {
         id: doc.id,
         displayName: doc.data().name,
         approved: doc.data().approved || false,
-      };
+      }
 
       if (doc.id === props.user?.uid) {
-        amCheckedIn = true;
+        amCheckedIn = true
         if (attendeeData.approved) {
-          currentUserApproved = true;
+          currentUserApproved = true
         }
       }
 
       if (attendeeData.approved) {
-        tempApproved.push(attendeeData);
+        tempApproved.push(attendeeData)
       } else {
-        tempPending.push(attendeeData);
+        tempPending.push(attendeeData)
       }
-    });
+    })
 
-    attendeesApproved.value = tempApproved;
-    attendeesPending.value = tempPending;
-    attendeeApproved.value = currentUserApproved;
+    attendeesApproved.value = tempApproved
+    attendeesPending.value = tempPending
+    attendeeApproved.value = currentUserApproved
 
     if (!amCheckedIn && props.user?.uid) {
-      emit("checkin", hostID, roomID);
+      emit('checkin', hostID, roomID)
     }
-  });
-});
+  })
+})
 
 const deleteAttendee = async (attendeeID) => {
   if (!props.user || props.user.uid !== hostID) {
-    message.value = "You are not authorized to delete attendees";
-    return;
+    message.value = 'You are not authorized to delete attendees'
+    return
   }
 
   if (!attendeeID) {
-    message.value = "Invalid attendee ID Provided";
-    return;
+    message.value = 'Invalid attendee ID Provided'
+    return
   }
 
-  message.value = "";
+  message.value = ''
 
   try {
-    const attendeeRef = doc(
-      db,
-      "users",
-      hostID,
-      "rooms",
-      roomID,
-      "attendees",
-      attendeeID
-    );
-    await deleteDoc(attendeeRef);
-    message.value = "Attendee deleted successfully";
+    const attendeeRef = doc(db, 'users', hostID, 'rooms', roomID, 'attendees', attendeeID)
+    await deleteDoc(attendeeRef)
+    message.value = 'Attendee deleted successfully'
   } catch (error) {
-    console.error("Error deleting attendee:", error);
-    message.value = "Failed to delete attendee: " + error.message;
+    console.error('Error deleting attendee:', error)
+    message.value = 'Failed to delete attendee: ' + error.message
   }
-};
+}
 
 const approveAttendee = async (attendeeID) => {
   if (!props.user || props.user.uid !== hostID) {
-    message.value = "You are not authorized to approve attendees";
-    return;
+    message.value = 'You are not authorized to approve attendees'
+    return
   }
 
   if (!attendeeID) {
-    message.value = "Invalid attendee ID Provided";
-    return;
+    message.value = 'Invalid attendee ID Provided'
+    return
   }
 
   try {
-    const attendeeRef = doc(
-      db,
-      "users",
-      hostID,
-      "rooms",
-      roomID,
-      "attendees",
-      attendeeID
-    );
-    await updateDoc(attendeeRef, { approved: true });
-    message.value = "Attendee approved successfully";
+    const attendeeRef = doc(db, 'users', hostID, 'rooms', roomID, 'attendees', attendeeID)
+    await updateDoc(attendeeRef, { approved: true })
+    message.value = 'Attendee approved successfully'
   } catch (error) {
-    console.error("Error approving attendee:", error);
-    message.value = "Failed to approve attendee: " + error.message;
+    console.error('Error approving attendee:', error)
+    message.value = 'Failed to approve attendee: ' + error.message
   }
-};
+}
 
 const toggleApproval = async (attendeeID, currentApprovalStatus) => {
   if (!props.user || props.user.uid !== hostID) {
-    message.value = "You are not authorized to toggle approval";
-    return;
+    message.value = 'You are not authorized to toggle approval'
+    return
   }
 
   if (!attendeeID) {
-    message.value = "Invalid attendee ID Provided";
-    return;
+    message.value = 'Invalid attendee ID Provided'
+    return
   }
 
-  message.value = "";
+  message.value = ''
 
   try {
-    const attendeeRef = doc(
-      db,
-      "users",
-      hostID,
-      "rooms",
-      roomID,
-      "attendees",
-      attendeeID
-    );
-    const newApprovalStatus = !currentApprovalStatus;
+    const attendeeRef = doc(db, 'users', hostID, 'rooms', roomID, 'attendees', attendeeID)
+    const newApprovalStatus = !currentApprovalStatus
 
-    await updateDoc(attendeeRef, { approved: newApprovalStatus });
-    message.value = "Attendee approval status toggled successfully";
+    await updateDoc(attendeeRef, { approved: newApprovalStatus })
+    message.value = 'Attendee approval status toggled successfully'
   } catch (error) {
-    console.error("Error toggling approval:", error);
-    message.value = "Failed to toggle approval: " + error.message;
+    console.error('Error toggling approval:', error)
+    message.value = 'Failed to toggle approval: ' + error.message
   }
-};
+}
 </script>
 
 <style scoped>

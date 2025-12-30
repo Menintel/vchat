@@ -1,8 +1,8 @@
-import { defineConfig, globalIgnores } from 'eslint/config'
-import globals from 'globals'
 import js from '@eslint/js'
-import pluginVue from 'eslint-plugin-vue'
 import skipFormatting from '@vue/eslint-config-prettier/skip-formatting'
+import { defineConfig, globalIgnores } from 'eslint/config'
+import pluginVue from 'eslint-plugin-vue'
+import globals from 'globals'
 import tseslint from 'typescript-eslint'
 import vueParser from 'vue-eslint-parser'
 
@@ -43,6 +43,23 @@ export default defineConfig([
     files: ['**/*.ts', '**/*.tsx'],
     languageOptions: {
       parser: tseslint.parser,
+    },
+  },
+
+  // Custom rules
+  {
+    rules: {
+      // Allow underscore-prefixed unused variables
+      '@typescript-eslint/no-unused-vars': [
+        'warn',
+        {
+          argsIgnorePattern: '^_',
+          varsIgnorePattern: '^_',
+        },
+      ],
+      'no-unused-vars': 'off',
+      // Allow single-word component names for pages
+      'vue/multi-word-component-names': 'off',
     },
   },
 

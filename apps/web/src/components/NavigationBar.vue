@@ -26,7 +26,7 @@
           </RouterLink>
           <div class="nav-user">
             <div class="user-avatar">
-              {{ displayName.charAt(0).toUpperCase() }}
+              {{ displayName?.charAt(0)?.toUpperCase() || '?' }}
             </div>
             <span class="user-name">{{ displayName }}</span>
           </div>
@@ -49,11 +49,11 @@
 </template>
 
 <script setup lang="ts">
+import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome'
 import { computed } from 'vue'
 import { useRouter } from 'vue-router'
-import { useAuthStore } from '@/store/auth.store'
 import { logout } from '@/firebase/auth'
-import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome'
+import { useAuthStore } from '@/store/auth.store'
 
 const router = useRouter()
 const authStore = useAuthStore()
@@ -62,8 +62,13 @@ const isAuthenticated = computed(() => authStore.isAuthenticated)
 const displayName = computed(() => authStore.displayName)
 
 async function handleLogout() {
-  await logout()
-  router.push('/')
+  try {
+    await logout()
+    router.push('/')
+  } catch (error) {
+    console.error('Logout failed:', error)
+    // Optionally show a toast/notification to the user
+  }
 }
 </script>
 

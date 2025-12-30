@@ -25,11 +25,13 @@ import NavigationBar from './components/NavigationBar.vue'
 
 <style scoped>
 .app-container {
+  display: flex;
+  flex-direction: column;
   min-height: 100vh;
 }
 
 .main-content {
-  min-height: 100vh;
+  flex: 1;
 }
 
 .loading-container {
