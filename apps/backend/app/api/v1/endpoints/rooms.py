@@ -5,11 +5,15 @@ import uuid
 from fastapi import APIRouter, Depends, HTTPException, Query, status
 from sqlalchemy.ext.asyncio import AsyncSession
 
+from app.api.deps import CurrentUser
 from app.core.database import get_db
+from app.core.livekit import generate_room_token
+from app.core.config import get_settings
 from app.crud import room_crud
 from app.schemas.room import RoomCreate, RoomResponse, RoomUpdate
 
 router = APIRouter(prefix="/rooms", tags=["rooms"])
+settings = get_settings()
 
 
 @router.post("/", response_model=RoomResponse, status_code=status.HTTP_201_CREATED)
@@ -94,3 +98,44 @@ async def delete_room(
             detail="Room not found",
         )
     await room_crud.delete_room(db, room)
+
+
+@router.post("/{room_id}/join")
+async def join_room(
+    room_id: uuid.UUID,
+    current_user: CurrentUser,
+    db: AsyncSession = Depends(get_db),
+) -> dict:
+    """
+    Join a room and get a LiveKit access token.
+
+    Requires authentication via Firebase token.
+    """
+    # Verify room exists
+    room = await room_crud.get_room(db, room_id)
+    if not room:
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND,
+            detail="Room not found",
+        )
+
+    # Get user info from Firebase token
+    participant_identity = current_user["uid"]
+    participant_name = current_user.get("name") or current_user.get(
+        "email", "Anonymous"
+    )
+
+    # Generate LiveKit token
+    token = generate_room_token(
+        room_name=str(room_id),
+        participant_identity=participant_identity,
+        participant_name=participant_name,
+    )
+
+    return {
+        "token": token,
+        "livekit_url": settings.livekit_url,
+        "room": RoomResponse.model_validate(room),
+        "participant_identity": participant_identity,
+        "participant_name": participant_name,
+    }

@@ -62,9 +62,54 @@
 
 ---
 
+## Phase 3: Code Quality & Security ✅
+*Completed: December 30, 2025*
+
+### Biome + lint-staged + Husky
+- Installed `@biomejs/biome` for linting/formatting
+- Installed `lint-staged` for pre-commit file filtering
+- Installed `husky` for Git hooks
+- Created `biome.json` configuration
+- Created `.husky/pre-commit` hook
+- Added npm scripts: `lint`, `lint:fix`, `format`, `check`
+
+### Security Fixes
+- Added redirect validation in `LoginPage.vue` to prevent open-redirect attacks
+- Updated `initAuthListener` in `firebase/auth.ts` to return unsubscribe function
+
+### Accessibility
+- Added `focus-visible` styles for all button variants
+- Added `@keyframes badge-pulse` animation in `HomeView.vue`
+
+### Cleanup
+- Renamed `Lobby.vue` → `LobbyPage.vue` (multi-word component name)
+- Added Firestore `onUnmounted` cleanup with error handling
+- Updated ESLint config to allow underscore-prefixed unused vars
+
+---
+
+## Phase 4: Backend LiveKit & Auth Integration ✅
+*Completed: December 31, 2025*
+
+### Firebase Auth Backend
+- Created `app/core/firebase.py` - Firebase Admin SDK token verification
+- Created `app/api/deps.py` - `CurrentUser` auth dependency for protected routes
+
+### LiveKit Token Endpoint
+- Created `app/api/v1/endpoints/livekit.py` with:
+  - `POST /api/v1/livekit/token` - Generate room access token (auth required)
+  - `GET /api/v1/livekit/url` - Get LiveKit server URL
+
+### Room Enhancements
+- Added `POST /api/v1/rooms/{id}/join` - Join room and get LiveKit token (auth required)
+- Fixed import bug in `core/livekit.py`
+
+---
+
 ## Commits
 
 | Hash | Message |
 |------|---------|
 | `bd447d8` | feat: Phase 1 - environment setup and monorepo restructure |
 | `dc00898` | feat: Phase 2 - UI modernization and Firebase auth |
+| `latest` | chore: add Biome, lint-staged, Husky + security/accessibility fixes |
