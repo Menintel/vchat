@@ -10,3 +10,9 @@ apps/backend/.venv/
 # pnpm logs
 pnpm-install.log
 
+# Mockups
+plan/Vchat mockup/
+
+# LiveKit native binary (downloaded at runtime)
+infra/livekit/livekit-server.exe
+infra/livekit/livekit.zip
